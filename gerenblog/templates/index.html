@@ -18,6 +18,7 @@
   <meta name="msapplication-TileColor" content="#0e90d2">
   <link rel="stylesheet" href="{% static 'css/amazeui.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
+    <script src="{% static 'js/jquery.min.js' %}"></script>
 </head>
 
 <body id="blog">
@@ -54,6 +55,7 @@
 
                 <ul class="am-dropdown-content">
                   <li><a href="">个人中心</a></li>
+                   <li><a href="{% url 'user_huose' %}">我的收藏</a></li>
                   <li><a href="{% url 'forget' %}">修改密码</a></li>
                   <li><a href="{% url 'out_login' %}">退出登录</a></li>
                 </ul>
@@ -200,5 +202,6 @@
 <script src="assets/js/amazeui.ie8polyfill.min.js"></script>
 <![endif]-->
 <script src="{% static 'js/amazeui.min.js' %}"></script>
+{% block js_extends %}{% endblock %}
 </body>
 </html>

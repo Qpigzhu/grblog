@@ -18,7 +18,7 @@ from django.urls import path,include,re_path
 from .settings import MEDIA_ROOT
 from django.views.static import serve
 from blog.views import Blog_list_View
-from user.views import LoginView,OutLoginView,ReUserView,ActiveUserView,ForgetPwdView,ForgetHtmlView,ForgetPwdDatilView
+from user.views import LoginView,OutLoginView,ReUserView,ActiveUserView,ForgetPwdView,ForgetHtmlView,ForgetPwdDatilView,LikeView,UuserHouseView,HouseView
 
 import xadmin
 urlpatterns = [
@@ -36,8 +36,13 @@ urlpatterns = [
     path('forgetpwd/',ForgetPwdDatilView.as_view(),name='forget_pwd'),
     #激活url
     re_path('active/(?P<active_code>.*)/',ActiveUserView.as_view(),name='active_user'),
-
-# 验证码url
+    #点赞的URL
+    path('like',LikeView.as_view(),name='like'),
+    #收藏的URL
+    path('house',HouseView.as_view(),name='house'),
+    #收藏中心url
+    path('userhouse',UuserHouseView.as_view(),name='user_huose'),
+    # 验证码url
     path("captcha/", include('captcha.urls')),
     #图片上传url处理
     re_path(r'^media/(?P<path>.*)', serve, {"document_root": MEDIA_ROOT}),

@@ -13,7 +13,8 @@
           <p class="am-article-meta blog-text-center">
               <span><a href="#" class="blog-color">{{ blog.author }}</a></span>-
               <span class="am-icon-tags"><a href={% url 'blog_type' blog.type_name.id %}>{{ blog.type_name }}&nbsp;</a></span>-
-              <span>{{ blog.created_time }}</span>
+              <span>{{ blog.created_time }}</span>-
+              <span class="am-icon-thumbs-up" id="like-number">{{ like_number }}</span>
           </p>
         </div>
         <div class="am-article-bd">
@@ -27,11 +28,10 @@
 
         <div class="am-g blog-article-widget blog-article-margin">
           <div class="am-u-lg-4 am-u-md-5 am-u-sm-7 am-u-sm-centered blog-text-center">
-            <span class="am-icon-tags"> &nbsp;</span><a href="{% url 'blog_type' blog.type_name.id %}">{{ blog.type_name }}</a>
+            <span class="am-icon-tags"></span><a href="{% url 'blog_type' blog.type_name.id %}">{{ blog.type_name }}</a>
             <hr>
-            <a href=""><span class="am-icon-qq am-icon-fw am-primary blog-icon"></span></a>
-            <a href=""><span class="am-icon-wechat am-icon-fw blog-icon"></span></a>
-            <a href=""><span class="am-icon-weibo am-icon-fw blog-icon"></span></a>
+              <span class="{{ active_like }} am-icon-fw am-primary blog-icon likes" id="like" style="color: red;"></span>
+              <span class="{{ active_house }} am-icon-fw blog-icon" id="house" style="color: red;"></span>
           </div>
         </div>
 
@@ -85,7 +85,97 @@
         <hr>
     </div>
 </div>
+<script>
+    //ajax点赞
+  function likeChang(objs,content_type,object_id){
+            var is_like = document.getElementsByClassName('am-icon-heart').length == 0
+            $.ajax({
+                url:"{% url 'like' %}",
+                type:'GET',
+                data:{
+                    content_type:content_type,
+                    object_id:object_id,
+                    is_like:is_like,
+                },
+                cache:false,
+                success:function (data) {
+                    console.log(data)
+                    if(data['status'] == 'SUCCESS'){
+                        var element = $(document.getElementsByClassName('likes'));
+                        if(is_like){
+                            element.removeClass('am-icon-heart-o');
+                            element.addClass('am-icon-heart');
+                        }else{
+                            element.removeClass('am-icon-heart');
+                            element.addClass('am-icon-heart-o');
+                        }
+                        //更新点赞数
+                        var like_num = $(document.getElementById('like-number'));
+                        like_num.text(data['like_num'])
+                    }else{
+                        if(data['code']==400){
+                            alert("登录才可点赞哦~~")
+                        }else{
+                            alert(data['message'])
+                        }
+                    }
+                },
+                error:function (xhr) {
+                    console.log(xhr)
+                }
+
+            });
+    }
+    //收藏函数
+  function house(obj,content_type,object_id){
+      var is_house = document.getElementsByClassName("am-icon-star").length == 0
+      $.ajax({
+          url:"{% url 'house' %}",
+          type:'GET',
+          data:{
+              content_type:content_type,
+              object_id:object_id,
+              is_house:is_house
+          },
+          cache:false,
+          success:function (data) {
+              if(data['status'] =='SUCCESS'){
+                  var element = $(document.getElementById('house'));
+                  if(is_house){
+                      element.removeClass('am-icon-star-o');
+                      element.addClass('am-icon-star');
+                  }else{
+                      element.removeClass('am-icon-star');
+                      element.addClass('am-icon-star-o');
+                  }
+              }else{
+                if(data['code'] == 400){
+                    alert(data['message'])
+                }
+              }
+          },
+          error:function (xhr) {
+              console.log(xhr)
+          }
+      });
+  }
+
+    //调用点赞函数
+  $(function(){
+        $("#like").click(function(){
+            likeChang($(this),'blog',{{ blog.id }});
+        });
+    });
+
+  $(function(){
+        $("#house").click(function(){
+            house($(this),'blog',{{ blog.id }});
+        });
+  });
+</script>
 {% endblock %}
+
+
 
 
 
